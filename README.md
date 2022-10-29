@@ -22,8 +22,8 @@ and the SQL type `Text`:
     - [ ] `impl TryFrom<Example> for String`
   - [ ] `impl TryFrom<String> for Example`
 - [ ] An implementation for the target database type of:
-  - [ ] [`impl ToSql for Example`](https://docs.diesel.rs/2.0.x/diesel/serialize/trait.ToSql.html)
-  - [ ] [`impl FromSql for Example`](https://docs.diesel.rs/2.0.x/diesel/deserialize/trait.FromSql.html)
+  - [ ] [`impl ToSql for Example`](https://docs.diesel.rs/2.0.x/diesel/serialize/trait.ToSql.html) that uses `TryFrom<Example>` or `TryFrom<&Example>`
+  - [ ] [`impl FromSql for Example`](https://docs.diesel.rs/2.0.x/diesel/deserialize/trait.FromSql.html) that uses `TryFrom<String>`
 - [ ] `Example` has:
   - [ ] [`#[derive(AsExpression)`](https://docs.diesel.rs/2.0.x/diesel/expression/derive.AsExpression.html)
   - [ ] [`#[derive(FromSqlRow)`](https://docs.diesel.rs/2.0.x/diesel/deserialize/derive.FromSqlRow.html)
