@@ -21,8 +21,8 @@ and the SQL type `Text`:
     - [ ] `impl<'a> TryFrom<&'a Example> for &'a String`
     - [ ] `impl TryFrom<Example> for String`
   - [ ] `impl TryFrom<String> for Example`
-- [ ] An implementation for the target database type of:
-  - [ ] [`impl ToSql for Example`](https://docs.diesel.rs/2.0.x/diesel/serialize/trait.ToSql.html) that uses `TryFrom<Example>` or `TryFrom<&Example>`
+- [ ] An implementation for the target database type(s) of:
+  - [ ] [`impl ToSql for Example`](https://docs.diesel.rs/2.0.x/diesel/serialize/trait.ToSql.html) that uses `TryFrom<&Example>` or `TryFrom<Example>`
   - [ ] [`impl FromSql for Example`](https://docs.diesel.rs/2.0.x/diesel/deserialize/trait.FromSql.html) that uses `TryFrom<String>`
 - [ ] `Example` has:
   - [ ] [`#[derive(AsExpression)`](https://docs.diesel.rs/2.0.x/diesel/expression/derive.AsExpression.html)
@@ -30,6 +30,31 @@ and the SQL type `Text`:
 
 A working example is implemented in [`src/label.rs`](src/label.rs) that can be
 used as a template for other implementations.
+
+### Postgres Example
+
+An example `ToSql` implementation that wraps around the `String` version to
+convert to `Text` looks like:
+
+```rust
+impl diesel::serialize::ToSql<Text, Pg> for Label {
+    fn to_sql(&self, out: &mut diesel::serialize::Output<'_, '_, Pg>) -> diesel::serialize::Result {
+        <String as diesel::serialize::ToSql<Text, Pg>>::to_sql(self.try_into()?, &mut out.reborrow())
+    }
+}
+```
+
+An example `FromSql` implementation that wraps around the `String` version to
+handle conversion from `Text` looks like:
+
+```rust
+impl diesel::deserialize::FromSql<Text, Pg> for Label {
+    fn from_sql<'a>(bytes : diesel::backend::RawValue<'a,Pg>) -> diesel::deserialize::Result<Self> {
+        <String as diesel::deserialize::FromSql<Text, Pg>>::from_sql(bytes)
+            .and_then(|s| Self::try_from(s).map_err(|e| e.into()))
+    }
+}
+```
 
 ## Configuration
 
