@@ -38,7 +38,7 @@ convert to `Text` looks like:
 ```rust
 impl diesel::serialize::ToSql<Text, Pg> for Label {
     fn to_sql(&self, out: &mut diesel::serialize::Output<'_, '_, Pg>) -> diesel::serialize::Result {
-        <String as diesel::serialize::ToSql<Text, Pg>>::to_sql(self.try_into()?, &mut out.reborrow())
+        <str as diesel::serialize::ToSql<Text, Pg>>::to_sql(self.try_into()?, &mut out.reborrow())
     }
 }
 ```

@@ -13,6 +13,12 @@ pub struct Label {
     label: String
 }
 
+impl Label {
+    pub fn as_str(&self) -> &str {
+        self.label.as_str()
+    }
+}
+
 // Custom error for conversion issues (required)
 #[derive(Debug)] // Debug for {:?} formatting (required)
 pub enum LabelError {
@@ -54,12 +60,12 @@ impl TryFrom<&str> for Label {
     }
 }
 
-// Implement conversion from the type to &String (required)
-impl<'a> TryFrom<&'a Label> for &'a String {
+// Implement conversion from the type to &str (required)
+impl<'a> TryFrom<&'a Label> for &'a str {
     type Error = LabelError;
 
-    fn try_from(l: &'a Label) -> Result<&'a String, Self::Error> {
-        Ok(&l.label)
+    fn try_from(l: &'a Label) -> Result<&'a str, Self::Error> {
+        Ok(l.label.as_str())
     }
 }
 
@@ -72,6 +78,15 @@ impl TryFrom<Label> for String {
     }
 }
 
+// Implement conversion from the type to &String (optional)
+impl<'a> TryFrom<&'a Label> for &'a String {
+    type Error = LabelError;
+
+    fn try_from(l: &'a Label) -> Result<&'a String, Self::Error> {
+        Ok(&l.label)
+    }
+}
+
 // Implementation of the Postgres ToSql/FromSql
 mod postgres {
     use super::*;
@@ -80,7 +95,7 @@ mod postgres {
 
     impl diesel::serialize::ToSql<Text, Pg> for Label {
         fn to_sql(&self, out: &mut diesel::serialize::Output<'_, '_, Pg>) -> diesel::serialize::Result {
-            <String as diesel::serialize::ToSql<Text, Pg>>::to_sql(self.try_into()?, &mut out.reborrow())
+            <str as diesel::serialize::ToSql<Text, Pg>>::to_sql(self.try_into()?, &mut out.reborrow())
         }
     }
 
