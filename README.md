@@ -12,7 +12,9 @@ illustrate the requirements in more specific terms.
 For a Rust type `Example` which converts to the Rust type `String`
 and the SQL type `Text`:
 
-- [ ] `Example` declaration
+- [ ] `Example` declaration with:
+  - [ ] [`#[derive(AsExpression)`](https://docs.diesel.rs/2.0.x/diesel/expression/derive.AsExpression.html)
+  - [ ] [`#[derive(FromSqlRow)`](https://docs.diesel.rs/2.0.x/diesel/deserialize/derive.FromSqlRow.html)
 - [ ] An error type for conversion issues that implements:
   - [ ] [`std::fmt::Display`](https://doc.rust-lang.org/std/fmt/trait.Display.html)
   - [ ] [`std::error::Error`](https://doc.rust-lang.org/std/fmt/struct.Error.html)
@@ -24,9 +26,6 @@ and the SQL type `Text`:
 - [ ] An implementation for the target database type(s) of:
   - [ ] [`impl ToSql for Example`](https://docs.diesel.rs/2.0.x/diesel/serialize/trait.ToSql.html) that uses `TryFrom<&Example>` or `TryFrom<Example>`
   - [ ] [`impl FromSql for Example`](https://docs.diesel.rs/2.0.x/diesel/deserialize/trait.FromSql.html) that uses `TryFrom<String>`
-- [ ] `Example` has:
-  - [ ] [`#[derive(AsExpression)`](https://docs.diesel.rs/2.0.x/diesel/expression/derive.AsExpression.html)
-  - [ ] [`#[derive(FromSqlRow)`](https://docs.diesel.rs/2.0.x/diesel/deserialize/derive.FromSqlRow.html)
 
 A working example is implemented in [`src/label.rs`](src/label.rs) that can be
 used as a template for other implementations.
