@@ -1,0 +1,12 @@
+[package]
+name = "diesel-trivial-convert"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+diesel = { version = "2.0.2", features = [ "postgres","mysql","sqlite" ] }
+dotenv = { version = "0.15.0" }
+
+[print_schema]
+file = "src/schema.rs"
+import_types = [ "diesel::sql_types::*", "crate::models::*" ]
