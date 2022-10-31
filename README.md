@@ -15,7 +15,7 @@ and the SQL type `Text`:
 - [ ] `Example` declaration with:
   - [ ] [`#[derive(AsExpression)`](https://docs.diesel.rs/2.0.x/diesel/expression/derive.AsExpression.html)
   - [ ] [`#[derive(FromSqlRow)`](https://docs.diesel.rs/2.0.x/diesel/deserialize/derive.FromSqlRow.html)
-  - [ ] [`#[diesel(sql_type=Text)]](https://docs.diesel.rs/diesel/sql_types/index.html) where `Text` is the appropriate [SQL type](https://docs.diesel.rs/diesel/sql_types/index.html)
+  - [ ] [`#[diesel(sql_type=Text)]`](https://docs.diesel.rs/diesel/sql_types/index.html) where `Text` is the appropriate [SQL type](https://docs.diesel.rs/diesel/sql_types/index.html)
 - [ ] An error type for conversion issues that implements:
   - [ ] [`std::fmt::Display`](https://doc.rust-lang.org/std/fmt/trait.Display.html)
   - [ ] [`std::error::Error`](https://doc.rust-lang.org/std/fmt/struct.Error.html)
