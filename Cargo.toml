@@ -10,3 +10,6 @@ dotenv = { version = "0.15.0" }
 [print_schema]
 file = "src/schema.rs"
 import_types = [ "diesel::sql_types::*", "crate::models::*" ]
+
+[features]
+postgres = [ ]

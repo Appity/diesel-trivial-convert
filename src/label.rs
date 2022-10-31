@@ -87,21 +87,50 @@ impl<'a> TryFrom<&'a Label> for &'a String {
     }
 }
 
-// Implementation of the Postgres ToSql/FromSql
-mod postgres {
+// DB::BindCollector : diesel::query_builder::bind_collector::RawBytesBindCollector<DB>
+
+#[cfg(feature="generic")]
+mod generic {
     use super::*;
 
-    use diesel::pg::Pg;
+    use diesel::serialize::{Output,Result,ToSql};
+    use diesel::backend::Backend;
 
-    impl diesel::serialize::ToSql<Text, Pg> for Label {
-        fn to_sql(&self, out: &mut diesel::serialize::Output<'_, '_, Pg>) -> diesel::serialize::Result {
-            <str as diesel::serialize::ToSql<Text, Pg>>::to_sql(self.try_into()?, &mut out.reborrow())
+    impl<DB> ToSql<Text, DB> for Label where DB : Backend
+    {
+        fn to_sql(&self, out: &mut Output<'_, '_, DB>) -> Result {
+            <str as ToSql<Text, DB>>::to_sql(self.try_into()?, out)
         }
     }
 
-    impl diesel::deserialize::FromSql<Text, Pg> for Label {
-        fn from_sql<'a>(bytes : diesel::backend::RawValue<'a,Pg>) -> diesel::deserialize::Result<Self> {
-            <String as diesel::deserialize::FromSql<Text, Pg>>::from_sql(bytes)
+    impl<DB> FromSql<Text, DB> for Label where DB : Backend,
+    *const str: diesel::deserialize::FromSql<diesel::sql_types::Text, DB> {
+        fn from_sql<'a>(bytes : diesel::backend::RawValue<'a,DB>) -> diesel::deserialize::Result<Self> {
+            <String as diesel::deserialize::FromSql<Text, DB>>::from_sql(bytes)
+                .and_then(|s| Self::try_from(s).map_err(|e| e.into()))
+        }
+    }
+}
+
+// Implementation of the Postgres ToSql/FromSql
+#[cfg(feature="postgres")]
+mod postgres {
+    use super::*;
+
+    use diesel::backend::RawValue;
+    use diesel::deserialize::{FromSql, Result as DeserializeResult};
+    use diesel::pg::Pg;
+    use diesel::serialize::{Output,Result as SerializeResult,ToSql};
+
+    impl ToSql<Text, Pg> for Label {
+        fn to_sql(&self, out: &mut Output<'_, '_, Pg>) -> SerializeResult {
+            <str as ToSql<Text, Pg>>::to_sql(self.try_into()?, &mut out.reborrow())
+        }
+    }
+
+    impl FromSql<Text, Pg> for Label {
+        fn from_sql<'a>(bytes : RawValue<'a,Pg>) -> DeserializeResult<Self> {
+            <String as FromSql<Text, Pg>>::from_sql(bytes)
                 .and_then(|s| Self::try_from(s).map_err(|e| e.into()))
         }
     }

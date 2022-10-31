@@ -12,7 +12,10 @@ use crate::Label;
 #[diesel(table_name=example_models)]
 pub struct ExampleModel {
     id: i32,
-    label: Label
+    label: Label,
+    label_nullable: Option<Label>,
+    label_array: Vec<Label>,
+    label_array_nullable: Option<Vec<Label>>
 }
 
 impl ExampleModel {
@@ -20,7 +23,10 @@ impl ExampleModel {
         Ok(
             insert_into(dsl::example_models)
                 .values(
-                    dsl::label.eq(label)
+                    (
+                        dsl::label.eq(label.clone()),
+                        dsl::label_array.eq(vec![ label ])
+                    )
                 )
                 .returning(
                     example_models::all_columns
